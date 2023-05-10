@@ -34,7 +34,7 @@
       reader.onload = function (e) {
         var imageDataURL = e.target.result;
         UnityLoader.SystemInfo.hasWebGL = function () { return true; };
-        SendMessage("YourGameObjectName", "SetImageFromDataURL", imageDataURL);
+        SendMessage("Image", "SetImageFromDataURL", imageDataURL);
       };
       reader.readAsDataURL(file);
     });
