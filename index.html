@@ -27,6 +27,24 @@
   </div>
   <input type="file" id="image-input" accept="image/*">
   <script>
+    var filePickerCode = `
+    function openFilePicker() {
+        var input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.onchange = function(e) {
+            var file = e.target.files[0];
+            var reader = new FileReader();
+            reader.onload = function(evt) {
+                var url = evt.target.result;
+                unityInstance.SendMessage('ImageUploader', 'OnImageSelected', url);
+            };
+            reader.readAsDataURL(file);
+        };
+        input.click();
+    };
+    openFilePicker();
+`;
     var imageInput = document.getElementById("image-input");
     imageInput.addEventListener("change", function (event) {
       var file = event.target.files[0];
