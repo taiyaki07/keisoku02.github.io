@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html lang="en-us">
-
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>Unity WebGL Player | Mp3</title>
-  <link rel="shortcut icon" href="TemplateData/favicon.ico">
-  <link rel="stylesheet" href="TemplateData/style.css">
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Unity WebGL Player | Mp3</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="stylesheet" href="TemplateData/style.css">
 </head>
-
 <body>
     <div id="unity-container" class="unity-desktop">
         <canvas id="unity-canvas" width=960 height=600></canvas>
@@ -25,19 +23,40 @@
             <div id="unity-build-title">Mp3</div>
         </div>
     </div>
-
-    <input type="file" id="imageInput" accept="image/*">
-    <button onclick="uploadImage()">Upload</button>
-    
+    <input type="file" id="imageUpload" accept="image/*">
     <script>
-        function uploadImage() {
-            var fileInput = document.getElementById('imageInput');
-            var file = fileInput.files[0];
+        // 画像のアップロード要素を取得
+        const imageUploadElement = document.getElementById('imageUpload');
 
-            // Unity側の関数に画像データを渡す
-            UnityLoader.SystemInfo.hasWebGL = function () { return true; };
-            var unityInstance = UnityLoader.instantiate("unityContainer", "Build/UnityProject.json");
-            unityInstance.SendMessage("ImageUploader", "ReceiveImage", file);
+        // 画像が選択されたときのイベントリスナーを追加
+        imageUploadElement.addEventListener('change', (event) => {
+            // 選択された画像ファイルを取得
+            const file = event.target.files[0];
+
+            // FileReaderを使用して画像ファイルを読み込む
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                // 読み込んだ画像データを取得
+                const imageData = e.target.result;
+
+                // Unityアプリに画像データを送信するための処理を実行
+                sendDataToUnity(imageData);
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Unityアプリにデータを送信する関数
+        function sendDataToUnity(imageData) {
+            // JSON形式のデータを作成
+            const data = {
+                image: imageData
+            };
+
+            // JSONデータをUnityアプリに送信するためのAjaxリクエストを行う
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', 'http://localhost:8080'); // UnityアプリのURLに合わせて変更
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(JSON.stringify(data));
         }
 
         var container = document.querySelector("#unity-container");
@@ -132,5 +151,4 @@
         document.body.appendChild(script);
     </script>
 </body>
-
 </html>
